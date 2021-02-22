@@ -6,7 +6,7 @@ namespace miniprof {
 namespace {
 GlobalProfiler::Config config() {
     GlobalProfiler::Config config;
-    config.buffer_config.buffer_reserve_size = 1000;  // small so it doesn't take long to allocate
+    config.buffer_config.buffer_size = 5000;               // small so it doesn't take long to allocate
     config.flush_interval = std::chrono::milliseconds(0);  // no flushing
     return config;
 }
@@ -49,7 +49,7 @@ TEST(Global, write_to_buffer_thread) {
     GlobalProfiler profiler{config()};
 
     constexpr size_t kNumThreads = 30;
-    constexpr size_t kNumWritesPerThread = 10;
+    constexpr size_t kNumWritesPerThread = 100;
 
     std::vector<std::thread> threads;
     for (size_t i = 0; i < kNumThreads; ++i) {

@@ -1,3 +1,4 @@
+#include <atomic>
 #include <cstddef>
 #include <vector>
 
@@ -15,7 +16,7 @@ struct Entry {
 class Buffer {
 public:
     struct Config {
-        size_t buffer_reserve_size = 1'000'000;
+        size_t buffer_size = 1'000'000;
     };
 
 public:
@@ -33,21 +34,16 @@ public:
     /// NOTE: These are okay to call concurrently provided the buffer has plenty of extra space.
     /// NOTE: flush_into() will return if all entries were read successfully or if the buffer overwrote elements
     ///
-    void push(Entry entry);
+    void push(const Entry& entry);
     bool flush_into(std::vector<Entry>& to);
-
-private:
-    void increment(size_t& data) const;
 
 private:
     /// Main data store, this vector isn't resized after construction so it's safe to keep pointers
     std::vector<Entry> entries_;
-    /// Incremented whenever an entry is added and decremented when it's removed. Used to keep track
-    /// of when we've dropped data
-    int access_counter_;
 
-    /// Write and read heads for accessing data
-    size_t write_;
-    size_t read_;
+    /// Write and read heads in the entries vector. The write head will be accessed from the write and read threads
+    /// (possibly simultaneously) so it needs to be atomic, but the read head is only accessed from the read thread
+    std::atomic<uint64_t> write_{0};
+    uint64_t read_{0};
 };
 }  // namespace miniprof

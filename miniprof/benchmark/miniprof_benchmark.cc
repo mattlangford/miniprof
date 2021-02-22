@@ -1,14 +1,15 @@
 #include <benchmark/benchmark.h>
 
-#define ENABLE_PROFILING
+#include <iostream>
 #include <random>
 
+#define ENABLE_PROFILING
 #include "miniprof/miniprof.hh"
 
 namespace {
 miniprof::GlobalProfiler::Config config() {
     miniprof::GlobalProfiler::Config config;
-    config.buffer_config.buffer_reserve_size = 1000;  // small so it doesn't take long to allocate
+    config.buffer_config.buffer_size = 100000;
     return config;
 }
 }  // namespace
@@ -33,7 +34,7 @@ static void with_profiling(benchmark::State& state) {
     }
 }
 
-BENCHMARK(no_profiling)->Arg(2)->Arg(10)->Arg(100)->Arg(1000);
+// BENCHMARK(no_profiling)->Arg(2)->Arg(10)->Arg(100)->Arg(1000);
 BENCHMARK(with_profiling)->Arg(2)->Arg(10)->Arg(100)->Arg(1000);
 
 BENCHMARK_MAIN();

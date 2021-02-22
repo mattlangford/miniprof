@@ -85,9 +85,9 @@ void GlobalProfiler::flush_thread_loop() {
 
     while (!shutdown_) {
         std::this_thread::sleep_for(config_.flush_interval);
-        std::cout << "Flushed " << flush().size() << " entries\n";
+        // std::cout << "Flushed " << flush().size() << " entries\n";
     }
 
-    std::cout << "Final flush: " << flush().size() << " entries\n";
+    // std::cout << "Final flush: " << flush().size() << " entries\n";
 }
 }  // namespace miniprof

@@ -6,7 +6,7 @@ namespace miniprof {
 
 TEST(Buffer, basic) {
     Buffer::Config config;
-    config.buffer_reserve_size = 4;
+    config.buffer_size = 4;
 
     Buffer buffer{config};
     buffer.push(Entry{"test", 100});

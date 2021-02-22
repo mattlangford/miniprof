@@ -8,7 +8,7 @@ namespace miniprof {
 namespace {
 GlobalProfiler::Config config() {
     GlobalProfiler::Config config;
-    config.buffer_config.buffer_reserve_size = 1000;  // small so it doesn't take long to allocate
+    config.buffer_config.buffer_size = 1000;  // small so it doesn't take long to allocate
     return config;
 }
 }  // namespace
