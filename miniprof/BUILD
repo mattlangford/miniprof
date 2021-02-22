@@ -1,7 +1,7 @@
 cc_library(
     name = "miniprof",
-    srcs = glob(["miniprof/*.cc"]),
-    hdrs = glob(["miniprof/*.hh"]),
+    srcs = glob(["*.cc"]),
+    hdrs = glob(["*.hh"]),
     deps = [],
     visibility = ["//visibility:public"],
 )

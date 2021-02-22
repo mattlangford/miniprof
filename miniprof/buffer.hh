@@ -1,5 +1,5 @@
-#include <vector>
 #include <cstddef>
+#include <vector>
 
 namespace miniprof {
 
@@ -18,13 +18,7 @@ public:
     };
 
 public:
-    explicit Buffer(const Config& config)
-        : entries_(std::vector<Entry>(config.buffer_reserve_size)),
-          written_entries_(0),
-          write_(entries.begin()),
-          read_(entries.begin()),
-    {
-    }
+    explicit Buffer(const Config& config);
 
     ~Buffer() = default;
     Buffer(const Buffer& rhs) = delete;
@@ -38,7 +32,7 @@ public:
     /// NOTE: These are okay to call concurrently provided the buffer has plenty of extra space.
     ///
     void push(Entry entry);
-    void flush_info(std::vector<Entry>& to);
+    void flush_into(std::vector<Entry>& to);
 
 private:
     void increment(size_t& data) const;
