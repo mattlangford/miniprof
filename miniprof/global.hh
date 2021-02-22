@@ -16,6 +16,9 @@ public:
         Buffer::Config buffer_config;
 
         size_t flush_buffer_reserve_size = 1'000'000;
+
+        // No flushing if <= 0
+        std::chrono::milliseconds flush_interval = std::chrono::milliseconds(10);
     };
 
 public:
@@ -47,9 +50,15 @@ public:
     static GlobalProfiler* instance_ptr();
 
 private:
+    void flush_thread_loop();
+
+private:
     static GlobalProfiler* instance_;
 
     const Config config_;
     Buffer buffer_;
+
+    std::atomic_bool shutdown_;
+    std::thread flush_thread_;
 };
 }  // namespace miniprof

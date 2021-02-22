@@ -1,9 +1,9 @@
 #include <benchmark/benchmark.h>
 
 #define ENABLE_PROFILING
-#include "miniprof/miniprof.hh"
-
 #include <random>
+
+#include "miniprof/miniprof.hh"
 
 namespace {
 miniprof::GlobalProfiler::Config config() {
@@ -11,7 +11,7 @@ miniprof::GlobalProfiler::Config config() {
     config.buffer_config.buffer_reserve_size = 1000;  // small so it doesn't take long to allocate
     return config;
 }
-}
+}  // namespace
 
 static void no_profiling(benchmark::State& state) {
     size_t sleep_us = state.range(0);

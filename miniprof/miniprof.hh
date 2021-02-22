@@ -11,18 +11,21 @@
 /// execution for any profiling to work.
 ///
 #ifdef ENABLE_PROFILING
-#define maybe_init_profiler(config) ::miniprof::GlobalProfiler _global_profiler{config}
+#define maybe_init_profiler(config) \
+    ::miniprof::GlobalProfiler _global_profiler { config }
 #else
 #define maybe_init_profiler(config)
 #endif
 
-#define init_profiler(config) ::miniprof::GlobalProfiler _global_profiler{config}
+#define init_profiler(config) \
+    ::miniprof::GlobalProfiler _global_profiler { config }
 
 ///
 /// Used for profiling a function or scope
 ///
 #ifdef ENABLE_PROFILING
-#define profile(name) ::miniprof::LocalProfiler _profiler__COUNTER__ {name}
+#define profile(name) \
+    ::miniprof::LocalProfiler _profiler__COUNTER__ { name }
 #else
 #define profile(config)
 #endif

@@ -16,18 +16,25 @@ GlobalProfiler* GlobalProfiler::instance_ = nullptr;
 // #############################################################################
 //
 
-GlobalProfiler::GlobalProfiler(const Config& config) : config_(config), buffer_(config_.buffer_config) {
+GlobalProfiler::GlobalProfiler(const Config& config)
+    : config_(config), buffer_(config_.buffer_config), shutdown_(false) {
     if (instance_ != nullptr) {
         throw std::runtime_error("Trying to create multiple global profilers. This is not allowed!");
     }
     instance_ = this;
+    flush_thread_ = std::thread{[this]() { flush_thread_loop(); }};
 }
 
 //
 // #############################################################################
 //
 
-GlobalProfiler::~GlobalProfiler() { instance_ = nullptr; }
+GlobalProfiler::~GlobalProfiler() {
+    instance_ = nullptr;
+
+    shutdown_ = true;
+    if (flush_thread_.joinable()) flush_thread_.join();
+}
 
 //
 // #############################################################################
@@ -67,4 +74,20 @@ GlobalProfiler& GlobalProfiler::instance() {
 //
 
 GlobalProfiler* GlobalProfiler::instance_ptr() { return instance_; }
+
+//
+// #############################################################################
+//
+
+void GlobalProfiler::flush_thread_loop() {
+    // No flushing with non-positive interval
+    if (config_.flush_interval.count() <= 0) return;
+
+    while (!shutdown_) {
+        std::this_thread::sleep_for(config_.flush_interval);
+        std::cout << "Flushed " << flush().size() << " entries\n";
+    }
+
+    std::cout << "Final flush: " << flush().size() << " entries\n";
+}
 }  // namespace miniprof

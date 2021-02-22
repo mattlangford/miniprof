@@ -7,6 +7,7 @@ namespace {
 GlobalProfiler::Config config() {
     GlobalProfiler::Config config;
     config.buffer_config.buffer_reserve_size = 1000;  // small so it doesn't take long to allocate
+    config.flush_interval = std::chrono::milliseconds(0);  // no flushing
     return config;
 }
 }  // namespace
@@ -70,5 +71,21 @@ TEST(Global, write_to_buffer_thread) {
         EXPECT_GE(results.front().ticks, 0);
         EXPECT_LT(results.front().ticks, kNumWritesPerThread);
     }
+}
+
+//
+// #############################################################################
+//
+
+TEST(Global, flush_thread) {
+    auto c = config();
+    c.flush_interval = std::chrono::milliseconds(10);
+
+    GlobalProfiler profiler{c};
+    auto& buffer = profiler.get_buffer();
+    buffer.push({"test1", 100});
+    buffer.push({"test2", 200});
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
 }  // namespace miniprof
