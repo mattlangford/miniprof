@@ -2,13 +2,15 @@
 #include <unordered_map>
 
 namespace miniprof {
-struct Config {};
 
 ///
 /// @brief Main profiler class, used to managed an arbitrary number of scoped profilers
 ///
 class GlobalProfiler {
-   public:
+public:
+    struct Config {};
+
+public:
     explicit GlobalProfiler(const Config& config);
 
     ~GlobalProfiler() = default;
@@ -17,13 +19,13 @@ class GlobalProfiler {
     GlobalProfiler& operator=(const GlobalProfiler& rhs) = delete;
     GlobalProfiler& operator=(GlobalProfiler&& rhs) = delete;
 
-   public:
+public:
     struct ScopeIdentifier {
         std::string_view name;
         size_t index;
     };
 
-   public:
+public:
     ///
     /// @brief Register the given scope name and retrieve the identifier that can be used to interface with it
     ///
@@ -32,7 +34,7 @@ class GlobalProfiler {
         return scopes.emplace_back({name}, scope_index);
     }
 
-   private:
+private:
     std::vector<ScopeIdentifier> scopes_;
 };
 }  // namespace miniprof

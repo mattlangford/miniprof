@@ -40,7 +40,7 @@ static constexpr auto kScopeNameColHeader = "Scope Name";
 //
 
 class Formatter {
-   public:
+public:
     using MetricExtractor = std::function<uint32_t(const std::vector<uint32_t>&)>;
     using Buffer = std::vector<std::pair<const char*, uint32_t>>;
 
@@ -83,7 +83,7 @@ class Formatter {
         return format_table(col_headers, row_data);
     }
 
-   private:
+private:
     template <size_t kNumCols>
     static std::string format_table(
         const std::array<std::string, kNumCols> col_headers,
