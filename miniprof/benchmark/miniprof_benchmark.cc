@@ -34,7 +34,7 @@ static void with_profiling(benchmark::State& state) {
     }
 }
 
-// BENCHMARK(no_profiling)->Arg(2)->Arg(10)->Arg(100)->Arg(1000);
+BENCHMARK(no_profiling)->Arg(2)->Arg(10)->Arg(100)->Arg(1000);
 BENCHMARK(with_profiling)->Arg(2)->Arg(10)->Arg(100)->Arg(1000);
 
 BENCHMARK_MAIN();

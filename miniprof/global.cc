@@ -83,11 +83,13 @@ void GlobalProfiler::flush_thread_loop() {
     // No flushing with non-positive interval
     if (config_.flush_interval.count() <= 0) return;
 
+    size_t total_flushed = 0;
     while (!shutdown_) {
         std::this_thread::sleep_for(config_.flush_interval);
-        // std::cout << "Flushed " << flush().size() << " entries\n";
+        total_flushed += flush().size();
     }
 
-    // std::cout << "Final flush: " << flush().size() << " entries\n";
+    total_flushed += flush().size();
+    //std::cout << "Total Flushed Entries: " << total_flushed << "\n";
 }
 }  // namespace miniprof
