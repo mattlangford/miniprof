@@ -19,8 +19,8 @@ cc_test(
 )
 
 cc_binary(
-    name = "global_benchmark",
-    srcs = ["benchmark/global_benchmark.cc"],
+    name = "miniprof_benchmark",
+    srcs = ["benchmark/miniprof_benchmark.cc"],
     deps = [
         ":miniprof",
         "@benchmark//:benchmark",
