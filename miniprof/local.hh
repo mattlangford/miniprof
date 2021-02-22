@@ -13,8 +13,6 @@ public:
     LocalProfiler& operator=(LocalProfiler&& rhs) = delete;
 
 private:
-    static uint32_t now();
-
     const char* name_;
     uint32_t start_;
 };

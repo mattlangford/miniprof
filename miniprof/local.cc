@@ -2,6 +2,7 @@
 
 #include <chrono>
 
+#include "miniprof/clock.hh"
 #include "miniprof/global.hh"
 
 namespace miniprof {
@@ -21,16 +22,6 @@ LocalProfiler::~LocalProfiler() {
         auto& buffer = instance->get_buffer();
         buffer.push({name_, now() - start_});
     }
-}
-
-//
-// #############################################################################
-//
-
-uint32_t LocalProfiler::now() {
-    // TODO: A faster clock here
-    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch())
-        .count();
 }
 
 }  // namespace miniprof

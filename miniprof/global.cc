@@ -90,6 +90,6 @@ void GlobalProfiler::flush_thread_loop() {
     }
 
     total_flushed += flush().size();
-    //std::cout << "Total Flushed Entries: " << total_flushed << "\n";
+    // std::cout << "Total Flushed Entries: " << total_flushed << "\n";
 }
 }  // namespace miniprof
