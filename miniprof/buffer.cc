@@ -25,7 +25,7 @@ void Buffer::push(Entry entry) {
 // #############################################################################
 //
 
-void Buffer::flush_into(std::vector<Entry>& to) {
+bool Buffer::flush_into(std::vector<Entry>& to) {
     while (read_ != write_) {
         // NOTE: Here is where problems arise if the read and write heads are too close and accessed concurrently
         to.push_back(entries_[read_]);
@@ -40,7 +40,9 @@ void Buffer::flush_into(std::vector<Entry>& to) {
 
         // Reset for next time
         access_counter_ = 0;
+        return false;
     }
+    return true;
 }
 
 //

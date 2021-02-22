@@ -30,9 +30,10 @@ public:
     ///
     /// @brief Add new entries to the buffer or remove all of the current entries.
     /// NOTE: These are okay to call concurrently provided the buffer has plenty of extra space.
+    /// NOTE: flush_into() will return if all entries were read successfully or if the buffer overwrote elements
     ///
     void push(Entry entry);
-    void flush_into(std::vector<Entry>& to);
+    bool flush_into(std::vector<Entry>& to);
 
 private:
     void increment(size_t& data) const;

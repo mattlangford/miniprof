@@ -17,7 +17,7 @@ TEST(Buffer, basic) {
 
     {
         std::vector<Entry> output;
-        buffer.flush_into(output);
+        ASSERT_TRUE(buffer.flush_into(output));
         ASSERT_EQ(output.size(), 3);
         EXPECT_EQ(output.front().ticks, 100);
     }
@@ -30,7 +30,7 @@ TEST(Buffer, basic) {
 
     {
         std::vector<Entry> output;
-        buffer.flush_into(output);
+        ASSERT_FALSE(buffer.flush_into(output));
         // Since we overwrote the buffer we'll have weird results as promised
         ASSERT_TRUE(output.empty());
     }
