@@ -4,6 +4,7 @@
 namespace miniprof {
 
 struct Entry {
+    const char* name;
     uint32_t ticks;
 };
 
