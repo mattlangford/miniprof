@@ -15,7 +15,7 @@ struct Entry {
 class Buffer {
 public:
     struct Config {
-        size_t buffer_reserve_size;
+        size_t buffer_reserve_size = 100'000'000;
     };
 
 public:

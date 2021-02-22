@@ -9,6 +9,7 @@ cc_library(
 cc_test(
     name = "miniprof_test",
     srcs = glob(["test/*.cc"]),
+    size = "small",
     deps = [
         ":miniprof",
         "@gtest//:gtest",

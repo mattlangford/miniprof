@@ -1,6 +1,8 @@
 #include "miniprof/global.hh"
 
+#include <algorithm>
 #include <exception>
+#include <iostream>
 
 namespace miniprof {
 
@@ -14,7 +16,7 @@ GlobalProfiler* GlobalProfiler::instance_ = nullptr;
 // #############################################################################
 //
 
-GlobalProfiler::GlobalProfiler(const Config& /*config*/) {
+GlobalProfiler::GlobalProfiler(const Config& config) : config_(config), buffer_(config_.buffer_config) {
     if (instance_ != nullptr) {
         throw std::runtime_error("Trying to create multiple global profilers. This is not allowed!");
     }
@@ -31,49 +33,38 @@ GlobalProfiler::~GlobalProfiler() { instance_ = nullptr; }
 // #############################################################################
 //
 
-Buffer& GlobalProfiler::get_buffer() {
-    thread_local ThreadRegistrar registrar;
-    return *registrar.buffer;
-}
+Buffer& GlobalProfiler::get_buffer() { return buffer_; }
 
 //
 // #############################################################################
 //
 
-std::vector<Entry> GlobalProfiler::flush() { return {}; }
+std::vector<Entry> GlobalProfiler::flush() {
+    std::vector<Entry> entries;
+    entries.reserve(config_.flush_buffer_reserve_size);
+
+    if (!buffer_.flush_into(entries)) {
+        throw std::runtime_error("Error reading from buffer.");
+    }
+
+    return entries;
+}
 
 //
 // #############################################################################
 //
 
 GlobalProfiler& GlobalProfiler::instance() {
-    if (instance_ == nullptr) {
+    auto ptr = instance_ptr();
+    if (ptr == nullptr) {
         throw std::runtime_error("Unable to get GlobalProfiler instance. Has it been constructed?");
     }
-    return *instance_;
+    return *ptr;
 }
 
 //
 // #############################################################################
 //
 
-GlobalProfiler::ThreadRegistrar::ThreadRegistrar() : buffer(GlobalProfiler::instance().add_buffer()) {}
-
-//
-// #############################################################################
-//
-
-GlobalProfiler::ThreadRegistrar::~ThreadRegistrar() { GlobalProfiler::instance().remove_buffer(buffer); }
-
-//
-// #############################################################################
-//
-
-std::list<Buffer>::iterator add_buffer();
-
-//
-// #############################################################################
-//
-
-void remove_buffer(std::list<Buffer>::iterator it);
+GlobalProfiler* GlobalProfiler::instance_ptr() { return instance_; }
 }  // namespace miniprof
