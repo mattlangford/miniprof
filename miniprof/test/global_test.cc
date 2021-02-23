@@ -94,4 +94,21 @@ TEST(Global, flush_thread) {
         buffer.push({"test2", 200});
     }
 }
+
+//
+// #############################################################################
+//
+
+TEST(Global, file_output) {
+    auto config = get_config();
+    config.flush_interval = std::chrono::milliseconds(10);
+
+    {
+    GlobalProfiler profiler{config, std::make_unique<CSVOutput>("/tmp/prof")};
+
+    auto& buffer = profiler.get_buffer();
+    buffer.push({"test1", 100});
+    buffer.push({"test2", 200});
+    }
+}
 }  // namespace miniprof

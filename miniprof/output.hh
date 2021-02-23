@@ -21,7 +21,7 @@ public:
 class CSVOutput : public OutputBase {
 public:
     CSVOutput(const std::filesystem::path& path);
-    ~CSVOutput() override = default;
+    ~CSVOutput() override;
     void handle_entries(const std::vector<Entry>& entries) override;
 
 private:
