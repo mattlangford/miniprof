@@ -28,31 +28,38 @@ int main()
 Building the above code with `-DENABLE_PROFILING` (and ideally -O3) and running will produce a CSV file at `/tmp/prof`. The `analysis.py` script can be used to view the results. Note that without defining `ENABLE_PROFILING`, there will be zero overhead and no output file generated.
 
 ## Performance
-There is a simple benchmark in the `miniprof` folder, which shows relatively small differences with and without profiling:
-```
---------------------------------------------------------------
-Benchmark                    Time             CPU   Iterations
---------------------------------------------------------------
-no_profiling/2            7659 ns         3665 ns       181812
-no_profiling/10          18000 ns         3847 ns       178484
-no_profiling/100        133823 ns         6277 ns       111889
-no_profiling/1000      1227101 ns        28773 ns        10000
-with_profiling/2          7890 ns         3915 ns       182527
-with_profiling/10        18152 ns         4031 ns       172560
-with_profiling/100      133909 ns         6440 ns       110269
-with_profiling/1000    1227856 ns        33746 ns        10000
-```
-More complicated benchmarks may come in the future.
+There is a simple benchmark in the `miniprof` folder, which shows relatively small differences with and without profiling.  Additionally with the program in the `example` folder (which is a bit more complicated and realistic with multiple threads), I've seen differences in the noise between the with and without profiling runs.
 
-Additionally with the example in the `example` folder (which is a bit more complicated/realistic), there are negligible differences:
+## Analysis
+Here is an example analysis:
 ```
-$ time bazel run //example --copt=-DENABLE_PROFILING
-...
-bazel run //example --copt=-DENABLE_PROFILING  3.99s user 0.07s system 97% cpu 4.170 total
+# Generate the profiling data
+$ bazel run //example --copt=-DENABLE_PROFILING
+
+# Analyze the generated data
+$ python3 analyze.py
+
+====================================================================================================================
+Profiling Results (note that results are similar to microseconds but may not be exact, relative times are accurate):
+====================================================================================================================
+                     microseconds                                    
+                              sum count       mean     std     p99.00
+name                                                                 
+main                      4244238     1 4244238.00     nan 4244238.00
+thread_conv11             3807751   500    7615.50  647.36    8871.18
+conv25                    2951683   100   29516.83 1546.36   33817.62
+conv11                     491144   100    4911.44  261.68    5579.33
+normalize                   51945  1605      32.36   11.57      60.00
+operator+=()                34660   805      43.06   14.06      81.00
+conv3                       31566   100     315.66   45.24     417.61
+normalize()/apply           26005  1605      16.20    4.08      30.00
+histogram()/find_max        25512  1606      15.89    9.11      38.75
+random                        512     1     512.00     nan     512.00
+sum_outputs                   269     1     269.00     nan     269.00
+histogram                      68     1      68.00     nan      68.00
+histogram()/binning            53     1      53.00     nan      53.00
+get_results                    50     1      50.00     nan      50.00
 ```
-```
-$ time bazel run //example
-...
-bazel run //example 3.97s user 0.06s system 96% cpu 4.194 total
-```
-Of course your results may vary.
+Here it shows some statistics about the collected data (note the `nan`s for standard deviation where only one sample is present). As the note at the top of the report says, the times may not be exactly microseconds (since the clock source may count CPU ticks rather than timestamps), but the relative magnitudes are still accurate and useful.
+
+

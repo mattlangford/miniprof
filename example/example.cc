@@ -28,17 +28,15 @@ int main() {
     // in some secondary threads
     std::vector<std::thread> threads;
     std::vector<Image> outputs;
-    constexpr size_t kNumThreads = 10;
+    constexpr size_t kNumThreads = 5;
     outputs.resize(kNumThreads, image);
     for (size_t i = 0; i < kNumThreads; ++i)
-        threads.emplace_back([i, &outputs](){ run_convolution("thread_conv11", 11, outputs[i]); });
-    for (auto& thread : threads)
-        thread.join();
+        threads.emplace_back([i, &outputs]() { run_convolution("thread_conv11", 11, outputs[i]); });
+    for (auto& thread : threads) thread.join();
 
     {
         profile("sum_outputs");
-        for (auto& output : outputs)
-        {
+        for (auto& output : outputs) {
             image += output;
         }
     }
