@@ -61,6 +61,11 @@ public:
     ///
     OutputBase& get_output();
 
+    ///
+    /// @brief Force a shutdown of the profiler, flushing all output and clearing the global instance
+    ///
+    void shutdown();
+
 private:
     void flush_thread_loop();
 

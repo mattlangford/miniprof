@@ -29,12 +29,7 @@ GlobalProfiler::GlobalProfiler(const Config& config, std::unique_ptr<OutputBase>
 // #############################################################################
 //
 
-GlobalProfiler::~GlobalProfiler() {
-    instance_ = nullptr;
-
-    shutdown_ = true;
-    if (flush_thread_.joinable()) flush_thread_.join();
-}
+GlobalProfiler::~GlobalProfiler() { shutdown(); }
 
 //
 // #############################################################################
@@ -74,6 +69,23 @@ GlobalProfiler& GlobalProfiler::instance() {
 //
 
 GlobalProfiler* GlobalProfiler::instance_ptr() { return instance_; }
+
+//
+// #############################################################################
+//
+
+OutputBase& GlobalProfiler::get_output() { return *output_; }
+
+//
+// #############################################################################
+//
+
+void GlobalProfiler::shutdown() {
+    instance_ = nullptr;
+
+    shutdown_ = true;
+    if (flush_thread_.joinable()) flush_thread_.join();
+}
 
 //
 // #############################################################################

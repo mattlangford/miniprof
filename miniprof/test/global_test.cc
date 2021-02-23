@@ -74,13 +74,20 @@ TEST(Global, write_to_buffer_thread) {
 TEST(Global, flush_thread) {
     auto config = get_test_config();
     config.flush_interval = std::chrono::milliseconds(10);
-    {
-        auto profiler = get_test_profiler(config);
+    auto profiler = get_test_profiler(config);
 
-        auto& buffer = profiler.get_buffer();
-        buffer.push({"test1", 100});
-        buffer.push({"test2", 200});
-    }
+    // Since we're using the test profiler, this is okay to do
+    auto& output = reinterpret_cast<TestOutput&>(profiler.get_output());
+
+    auto& buffer = profiler.get_buffer();
+    buffer.push({"test1", 100});
+    buffer.push({"test2", 200});
+
+    profiler.shutdown();
+
+    auto entries = output.get_entries();
+    ASSERT_EQ(entries.size(), 2);
+    EXPECT_EQ(entries.front().name, "test1");
 }
 
 //
