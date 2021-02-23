@@ -104,11 +104,11 @@ TEST(Global, file_output) {
     config.flush_interval = std::chrono::milliseconds(10);
 
     {
-    GlobalProfiler profiler{config, std::make_unique<CSVOutput>("/tmp/prof")};
+        GlobalProfiler profiler{config, std::make_unique<CSVOutput>("/tmp/prof")};
 
-    auto& buffer = profiler.get_buffer();
-    buffer.push({"test1", 100});
-    buffer.push({"test2", 200});
+        auto& buffer = profiler.get_buffer();
+        buffer.push({"test1", 100});
+        buffer.push({"test2", 200});
     }
 }
 }  // namespace miniprof

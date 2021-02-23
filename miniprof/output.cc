@@ -1,8 +1,8 @@
 #include "miniprof/output.hh"
 
-#include "miniprof/buffer.hh"
-
 #include <iostream>
+
+#include "miniprof/buffer.hh"
 
 namespace miniprof {
 
@@ -19,10 +19,7 @@ CSVOutput::CSVOutput(const std::filesystem::path& path) {
 // #############################################################################
 //
 
-CSVOutput::~CSVOutput()
-{
-    stream_.close();
-}
+CSVOutput::~CSVOutput() { stream_.close(); }
 
 //
 // #############################################################################
