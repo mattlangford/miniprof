@@ -7,8 +7,8 @@
 ///
 // #define ENABLE_PROFILING 1
 
-#define require_semicolon \
-    do {                  \
+#define REQ_SEMICOLON \
+    do {              \
     } while (false)
 
 ///
@@ -17,7 +17,7 @@
 #ifdef ENABLE_PROFILING
 #define init_default_profiler() ::miniprof::GlobalProfiler _profiler = ::miniprof::get_default_profiler()
 #else
-#define init_default_profiler() require_semicolon
+#define init_default_profiler() REQ_SEMICOLON
 #endif
 
 ///
@@ -26,8 +26,11 @@
 #ifdef ENABLE_PROFILING
 #define profile(name) \
     ::miniprof::LocalProfiler _profiler__COUNTER__ { name }
+#define profile_function() \
+    ::miniprof::LocalProfiler _profiler__COUNTER__ { __FUNCTION__ }
 #else
-#define profile(name) require_semicolon
+#define profile(name) REQ_SEMICOLON
+#define profile_function() REQ_SEMICOLON
 #endif
 
 namespace miniprof {

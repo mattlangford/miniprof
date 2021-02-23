@@ -4,7 +4,7 @@
 #include "example/processing.hh"
 #include "miniprof/miniprof.hh"
 
-void run_convolution(const char* name, size_t dim, Image& image) {
+void run_convolution([[maybe_unused]] const char* name, size_t dim, Image& image) {
     for (size_t i = 0; i < 100; ++i) {
         {
             profile(name);
@@ -22,7 +22,7 @@ int main() {
     auto start = std::chrono::high_resolution_clock::now();
 
     init_default_profiler();
-    profile("main()");
+    profile_function();
 
     Image image;
     {
