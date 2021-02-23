@@ -25,9 +25,7 @@ int main()
     }
 }
 ```
-Building the above code with `-DENABLE_PROFILING` and running will produce a CSV file at `/tmp/prof`. The `analysis.py`
-script can be used to view the results. Note that without defining `ENABLE_PROFILING`, there will be zero overhead and
-no output file generated.
+Building the above code with `-DENABLE_PROFILING` (and ideally -O3) and running will produce a CSV file at `/tmp/prof`. The `analysis.py` script can be used to view the results. Note that without defining `ENABLE_PROFILING`, there will be zero overhead and no output file generated.
 
 ## Performance
 There is a simple benchmark in the `miniprof` folder, which shows relatively small differences with and without profiling:

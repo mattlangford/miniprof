@@ -19,13 +19,13 @@ public:
         Buffer::Config buffer_config;
 
         /// How much space to reserve per call to flush
-        size_t flush_buffer_reserve_size = 1'000'000;
+        size_t flush_buffer_reserve_size;
 
         /// No flushing if <= 0
-        std::chrono::milliseconds flush_interval = std::chrono::milliseconds(10);
+        std::chrono::milliseconds flush_interval;
 
         /// Where to dump data to
-        std::string output = "/tmp/prof.csv";
+        std::string output;
     };
 
 public:

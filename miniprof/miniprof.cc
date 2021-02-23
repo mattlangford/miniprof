@@ -8,7 +8,14 @@ namespace miniprof {
 // #############################################################################
 //
 
-GlobalProfiler::Config get_default_config() { return {}; }
+GlobalProfiler::Config get_default_config() {
+    GlobalProfiler::Config config;
+    config.buffer_config.buffer_size = 100'000;
+    config.flush_buffer_reserve_size = 10'000;
+    config.flush_interval = std::chrono::milliseconds(100);
+    config.output = "/tmp/prof.csv";
+    return config;
+}
 
 //
 // #############################################################################

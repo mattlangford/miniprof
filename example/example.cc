@@ -1,20 +1,14 @@
 #include <chrono>
 #include <iostream>
+#include <thread>
 
 #include "example/processing.hh"
 #include "miniprof/miniprof.hh"
 
 void run_convolution([[maybe_unused]] const char* name, size_t dim, Image& image) {
     for (size_t i = 0; i < 100; ++i) {
-        {
-            profile(name);
-            image += average_convolution(dim, image);
-        }
-
-        {
-            profile("normalize");
-            normalize(image);
-        }
+        profile(name);
+        image += average_convolution(dim, image);
     }
 }
 
@@ -24,32 +18,40 @@ int main() {
     init_default_profiler();
     profile_function();
 
-    Image image;
-    {
-        profile("random");
-        image = random(100, 200);
-    }
+    Image image = random(100, 200);
 
+    // in the main thread
     run_convolution("conv3", 3, image);
     run_convolution("conv11", 11, image);
     run_convolution("conv25", 25, image);
 
-    std::vector<size_t> hist;
-    float bin_size = 0.1f;
-    float min_value = 0.f;
+    // in some secondary threads
+    std::vector<std::thread> threads;
+    std::vector<Image> outputs;
+    constexpr size_t kNumThreads = 10;
+    outputs.resize(kNumThreads, image);
+    for (size_t i = 0; i < kNumThreads; ++i)
+        threads.emplace_back([i, &outputs](){ run_convolution("thread_conv11", 11, outputs[i]); });
+    for (auto& thread : threads)
+        thread.join();
+
     {
-        profile("hist");
-        hist = histogram(bin_size, image, min_value);
+        profile("sum_outputs");
+        for (auto& output : outputs)
+        {
+            image += output;
+        }
     }
 
-    {
-        profile("print_results");
-        for (size_t bin = 0; bin < hist.size(); ++bin) {
-            if (hist[bin] == 0) continue;
+    double bin_size = 0.01;
 
-            std::cout << "bin " << bin << " (" << (min_value + bin * bin_size) << " -> "
-                      << (min_value + (bin + 1) * bin_size) << "): " << hist[bin] << "\n";
-        }
+    std::vector<size_t> hist = histogram(bin_size, image);
+
+    {
+        profile("get_results");
+        auto it = std::max_element(hist.begin(), hist.end());
+        size_t bin = std::distance(hist.begin(), it);
+        std::cout << "Max bin: " << bin << " (" << (bin * bin_size) << " -> " << (bin * bin_size + bin_size) << ")\n";
     }
 
     auto end = std::chrono::high_resolution_clock::now();
