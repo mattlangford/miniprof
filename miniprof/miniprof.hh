@@ -7,13 +7,17 @@
 ///
 // #define ENABLE_PROFILING 1
 
+#define require_semicolon \
+    do {                  \
+    } while (false)
+
 ///
 /// For initializing the global profiler
 ///
 #ifdef ENABLE_PROFILING
-#define init_deafult_profiler() ::miniprof::GlobalProfiler _profiler = get_default_profiler();
+#define init_default_profiler() ::miniprof::GlobalProfiler _profiler = ::miniprof::get_default_profiler()
 #else
-#define init_deafult_profiler()
+#define init_default_profiler() require_semicolon
 #endif
 
 ///
@@ -23,7 +27,7 @@
 #define profile(name) \
     ::miniprof::LocalProfiler _profiler__COUNTER__ { name }
 #else
-#define profile(name)
+#define profile(name) require_semicolon
 #endif
 
 namespace miniprof {

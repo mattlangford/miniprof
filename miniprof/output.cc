@@ -13,6 +13,8 @@ namespace miniprof {
 CSVOutput::CSVOutput(const std::filesystem::path& path) {
     std::filesystem::create_directories(path.parent_path());
     stream_.open(path);
+
+    stream_ << "name,ticks\n";
 }
 
 //
