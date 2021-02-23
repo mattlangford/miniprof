@@ -2,32 +2,20 @@
 
 #include <gtest/gtest.h>
 
+#include "miniprof/miniprof.hh"
 #include "miniprof/output.hh"
 
 namespace miniprof {
-namespace {
-GlobalProfiler::Config get_config() {
-    GlobalProfiler::Config config;
-    config.buffer_config.buffer_size = 5000;               // small so it doesn't take long to allocate
-    config.flush_interval = std::chrono::milliseconds(0);  // no flushing
-    return config;
-}
-
-GlobalProfiler get_profiler(const GlobalProfiler::Config& config = get_config()) {
-    return GlobalProfiler{config, std::make_unique<TestOutput>()};
-}
-}  // namespace
-
 TEST(Global, construct) {
     {
-        auto profiler = get_profiler();
+        auto profiler = get_test_profiler();
         EXPECT_EQ(&GlobalProfiler::instance(), &profiler);
 
         // Already constructed!
-        EXPECT_THROW(get_profiler(), std::runtime_error);
+        EXPECT_THROW(get_test_profiler(), std::runtime_error);
     }
 
-    auto profiler = get_profiler();
+    auto profiler = get_test_profiler();
     EXPECT_EQ(&GlobalProfiler::instance(), &profiler);
 }
 
@@ -36,7 +24,7 @@ TEST(Global, construct) {
 //
 
 TEST(Global, write_to_buffer) {
-    auto profiler = get_profiler();
+    auto profiler = get_test_profiler();
     auto& buffer = profiler.get_buffer();
     buffer.push({"test1", 100});
     buffer.push({"test2", 200});
@@ -52,7 +40,7 @@ TEST(Global, write_to_buffer) {
 //
 
 TEST(Global, write_to_buffer_thread) {
-    auto profiler = get_profiler();
+    auto profiler = get_test_profiler();
 
     constexpr size_t kNumThreads = 30;
     constexpr size_t kNumWritesPerThread = 100;
@@ -84,10 +72,10 @@ TEST(Global, write_to_buffer_thread) {
 //
 
 TEST(Global, flush_thread) {
-    auto config = get_config();
+    auto config = get_test_config();
     config.flush_interval = std::chrono::milliseconds(10);
     {
-        auto profiler = get_profiler(config);
+        auto profiler = get_test_profiler(config);
 
         auto& buffer = profiler.get_buffer();
         buffer.push({"test1", 100});
@@ -100,11 +88,8 @@ TEST(Global, flush_thread) {
 //
 
 TEST(Global, file_output) {
-    auto config = get_config();
-    config.flush_interval = std::chrono::milliseconds(10);
-
     {
-        GlobalProfiler profiler{config, std::make_unique<CSVOutput>("/tmp/prof")};
+        auto profiler = get_csv_writing_profiler();
 
         auto& buffer = profiler.get_buffer();
         buffer.push({"test1", 100});

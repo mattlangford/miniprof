@@ -2,21 +2,9 @@
 
 #include <gtest/gtest.h>
 
-#include "miniprof/global.hh"
+#include "miniprof/miniprof.hh"
 
 namespace miniprof {
-namespace {
-GlobalProfiler::Config get_config() {
-    GlobalProfiler::Config config;
-    config.buffer_config.buffer_size = 1000;  // small so it doesn't take long to allocate
-    return config;
-}
-
-GlobalProfiler get_profiler(const GlobalProfiler::Config& config = get_config()) {
-    return GlobalProfiler{config, std::make_unique<TestOutput>()};
-}
-}  // namespace
-
 //
 // #############################################################################
 //
@@ -31,7 +19,7 @@ TEST(Local, no_global) {
 //
 
 TEST(Local, with_global) {
-    auto profiler = get_profiler();
+    auto profiler = get_test_profiler();
 
     {
         LocalProfiler test("hello");

@@ -56,6 +56,11 @@ public:
     static GlobalProfiler& instance();
     static GlobalProfiler* instance_ptr();
 
+    ///
+    /// @brief Get the current output module
+    ///
+    OutputBase& get_output();
+
 private:
     void flush_thread_loop();
 
