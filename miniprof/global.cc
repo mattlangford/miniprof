@@ -1,7 +1,7 @@
 #include "miniprof/global.hh"
 
-#include <algorithm>
 #include <exception>
+#include <filesystem>
 #include <iostream>
 
 namespace miniprof {
@@ -16,8 +16,8 @@ GlobalProfiler* GlobalProfiler::instance_ = nullptr;
 // #############################################################################
 //
 
-GlobalProfiler::GlobalProfiler(const Config& config)
-    : config_(config), buffer_(config_.buffer_config), shutdown_(false) {
+GlobalProfiler::GlobalProfiler(const Config& config, std::unique_ptr<OutputBase> output)
+    : config_(config), buffer_(config_.buffer_config), shutdown_(false), output_(std::move(output)) {
     if (instance_ != nullptr) {
         throw std::runtime_error("Trying to create multiple global profilers. This is not allowed!");
     }
@@ -83,13 +83,12 @@ void GlobalProfiler::flush_thread_loop() {
     // No flushing with non-positive interval
     if (config_.flush_interval.count() <= 0) return;
 
-    size_t total_flushed = 0;
     while (!shutdown_) {
         std::this_thread::sleep_for(config_.flush_interval);
-        total_flushed += flush().size();
+
+        output_->handle_entries(flush());
     }
 
-    total_flushed += flush().size();
-    // std::cout << "Total Flushed Entries: " << total_flushed << "\n";
+    output_->handle_entries(flush());
 }
 }  // namespace miniprof

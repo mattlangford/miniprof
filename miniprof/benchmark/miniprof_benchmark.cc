@@ -25,7 +25,7 @@ static void no_profiling(benchmark::State& state) {
 
 static void with_profiling(benchmark::State& state) {
     size_t sleep_us = state.range(0);
-    init_profiler(config());
+    miniprof::GlobalProfiler{config(), std::make_unique<miniprof::CSVOutput>("/tmp/prof")};
 
     // Perform setup here
     for (auto _ : state) {

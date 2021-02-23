@@ -1,9 +1,11 @@
+#pragma once
 #include <list>
 #include <memory>
 #include <thread>
 #include <unordered_map>
 
 #include "miniprof/buffer.hh"
+#include "miniprof/output.hh"
 
 namespace miniprof {
 
@@ -13,16 +15,21 @@ namespace miniprof {
 class GlobalProfiler {
 public:
     struct Config {
+        /// Configuration for the buffer
         Buffer::Config buffer_config;
 
+        /// How much space to reserve per call to flush
         size_t flush_buffer_reserve_size = 1'000'000;
 
-        // No flushing if <= 0
+        /// No flushing if <= 0
         std::chrono::milliseconds flush_interval = std::chrono::milliseconds(10);
+
+        /// Where to dump data to
+        std::string output = "/tmp/prof.csv";
     };
 
 public:
-    explicit GlobalProfiler(const Config& config);
+    GlobalProfiler(const Config& config, std::unique_ptr<OutputBase> output);
     ~GlobalProfiler();
 
     GlobalProfiler(const GlobalProfiler& rhs) = delete;
@@ -60,5 +67,7 @@ private:
 
     std::atomic_bool shutdown_;
     std::thread flush_thread_;
+
+    std::unique_ptr<OutputBase> output_;
 };
 }  // namespace miniprof

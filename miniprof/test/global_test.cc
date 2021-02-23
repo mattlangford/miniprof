@@ -2,26 +2,32 @@
 
 #include <gtest/gtest.h>
 
+#include "miniprof/output.hh"
+
 namespace miniprof {
 namespace {
-GlobalProfiler::Config config() {
+GlobalProfiler::Config get_config() {
     GlobalProfiler::Config config;
     config.buffer_config.buffer_size = 5000;               // small so it doesn't take long to allocate
     config.flush_interval = std::chrono::milliseconds(0);  // no flushing
     return config;
 }
+
+GlobalProfiler get_profiler(const GlobalProfiler::Config& config = get_config()) {
+    return GlobalProfiler{config, std::make_unique<TestOutput>()};
+}
 }  // namespace
 
 TEST(Global, construct) {
     {
-        GlobalProfiler profiler{config()};
+        auto profiler = get_profiler();
         EXPECT_EQ(&GlobalProfiler::instance(), &profiler);
 
         // Already constructed!
-        EXPECT_THROW(GlobalProfiler{config()}, std::runtime_error);
+        EXPECT_THROW(get_profiler(), std::runtime_error);
     }
 
-    GlobalProfiler profiler{config()};
+    auto profiler = get_profiler();
     EXPECT_EQ(&GlobalProfiler::instance(), &profiler);
 }
 
@@ -30,7 +36,7 @@ TEST(Global, construct) {
 //
 
 TEST(Global, write_to_buffer) {
-    GlobalProfiler profiler{config()};
+    auto profiler = get_profiler();
     auto& buffer = profiler.get_buffer();
     buffer.push({"test1", 100});
     buffer.push({"test2", 200});
@@ -46,7 +52,7 @@ TEST(Global, write_to_buffer) {
 //
 
 TEST(Global, write_to_buffer_thread) {
-    GlobalProfiler profiler{config()};
+    auto profiler = get_profiler();
 
     constexpr size_t kNumThreads = 30;
     constexpr size_t kNumWritesPerThread = 100;
@@ -78,14 +84,14 @@ TEST(Global, write_to_buffer_thread) {
 //
 
 TEST(Global, flush_thread) {
-    auto c = config();
-    c.flush_interval = std::chrono::milliseconds(10);
+    auto config = get_config();
+    config.flush_interval = std::chrono::milliseconds(10);
+    {
+        auto profiler = get_profiler(config);
 
-    GlobalProfiler profiler{c};
-    auto& buffer = profiler.get_buffer();
-    buffer.push({"test1", 100});
-    buffer.push({"test2", 200});
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        auto& buffer = profiler.get_buffer();
+        buffer.push({"test1", 100});
+        buffer.push({"test2", 200});
+    }
 }
 }  // namespace miniprof
