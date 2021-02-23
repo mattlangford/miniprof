@@ -18,6 +18,6 @@ if __name__ == "__main__":
     df = df.groupby(["name"]).agg(["sum", "count", "mean", "std", percentile(0.99)])
     df.sort_values([("microseconds", "sum")], ascending=False, inplace=True)
 
-    results_str = "Profiling Results (note that results are similar to microseconds but may not be exact, relative times are accurate):"
+    results_str = "Profiling Results (note that timing are approximately microseconds but may not be exact, relative times are accurate):"
     print (f"{'='*len(results_str)}\n{results_str}\n{'='*len(results_str)}")
-    print (df)
+    print (df.fillna('N/A'))

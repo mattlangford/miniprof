@@ -38,14 +38,13 @@ $ bazel run //example --copt=-DENABLE_PROFILING
 
 # Analyze the generated data
 $ python3 analyze.py
-
-====================================================================================================================
-Profiling Results (note that results are similar to microseconds but may not be exact, relative times are accurate):
-====================================================================================================================
+======================================================================================================================
+Profiling Results (note that timing are approximately microseconds but may not be exact, relative times are accurate):
+======================================================================================================================
                      microseconds                                    
                               sum count       mean     std     p99.00
 name                                                                 
-main                      4244238     1 4244238.00     nan 4244238.00
+main                      4244238     1 4244238.00     N/A 4244238.00
 thread_conv11             3807751   500    7615.50  647.36    8871.18
 conv25                    2951683   100   29516.83 1546.36   33817.62
 conv11                     491144   100    4911.44  261.68    5579.33
@@ -54,12 +53,12 @@ operator+=()                34660   805      43.06   14.06      81.00
 conv3                       31566   100     315.66   45.24     417.61
 normalize()/apply           26005  1605      16.20    4.08      30.00
 histogram()/find_max        25512  1606      15.89    9.11      38.75
-random                        512     1     512.00     nan     512.00
-sum_outputs                   269     1     269.00     nan     269.00
-histogram                      68     1      68.00     nan      68.00
-histogram()/binning            53     1      53.00     nan      53.00
-get_results                    50     1      50.00     nan      50.00
+random                        512     1     512.00     N/A     512.00
+sum_outputs                   269     1     269.00     N/A     269.00
+histogram                      68     1      68.00     N/A      68.00
+histogram()/binning            53     1      53.00     N/A      53.00
+get_results                    50     1      50.00     N/A      50.00
 ```
-Here it shows some statistics about the collected data (note the `nan`s for standard deviation where only one sample is present). As the note at the top of the report says, the times may not be exactly microseconds (since the clock source may count CPU ticks rather than timestamps), but the relative magnitudes are still accurate and useful.
+Here it shows some statistics about the collected data. As the note at the top of the report says, the times may not be exactly microseconds (since the clock source may count CPU ticks rather than timestamps), but the relative magnitudes are still accurate and useful.
 
 
